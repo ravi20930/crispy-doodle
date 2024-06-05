@@ -13,11 +13,16 @@ export default function Home() {
 
     data.forEach((pageData) => {
       const pageDiv = document.createElement("div");
-      pageDiv.classList.add("page", "bg-white");
+      pageDiv.classList.add("page", "bg-white", "relative");
 
       if (pageData.header) {
         const headerDiv = document.createElement("div");
-        headerDiv.classList.add("header", "py-4", "bg-gray-200");
+        headerDiv.classList.add(
+          "header",
+          "py-4",
+          "bg-indigo-700",
+          "text-white"
+        );
         headerDiv.innerHTML = `<h1 class="text-xl">${pageData.header}</h1>`;
         pageDiv.appendChild(headerDiv);
       }
@@ -27,7 +32,8 @@ export default function Home() {
         "content",
         "mt-20",
         "flex",
-        "justify-between"
+        "justify-between",
+        "px-8"
       );
 
       if (pageData.content.title) {
@@ -51,10 +57,10 @@ export default function Home() {
           ul.classList.add("list-disc", "pl-5");
           pageData.content.items.forEach((item) => {
             const li = document.createElement("li");
-            li.classList.add("mb-4");
+            li.classList.add("mb-2");
             li.innerHTML = `
               <span class="font-bold">${item.chapter}</span> - Page ${item.page}
-              <img src="${item.image}" alt="${item.chapter}" class="mt-2 w-full h-32 object-cover">
+              <img src="${item.image}" alt="${item.chapter}" class="mt-2 w-full h-24 object-cover">
             `;
             ul.appendChild(li);
           });
@@ -64,8 +70,8 @@ export default function Home() {
         const imageWrapper = document.createElement("div");
         imageWrapper.classList.add("image-placeholder", "ml-4");
         imageWrapper.innerHTML = `<img src="${
-          pageData.content.items ? pageData.content.items[0].image : ""
-        }" alt="Page Image" class="w-full h-64 object-cover">`;
+          pageData.content.items ? pageData.content.items.image : ""
+        }" alt="Page Image" class="w-full h-48 object-cover">`;
 
         if (imageLeft) {
           contentWrapper.appendChild(imageWrapper);
@@ -82,7 +88,12 @@ export default function Home() {
 
       if (pageData.footer) {
         const footerDiv = document.createElement("div");
-        footerDiv.classList.add("footer", "py-4", "bg-gray-200");
+        footerDiv.classList.add(
+          "footer",
+          "py-4",
+          "bg-indigo-700",
+          "text-white"
+        );
         footerDiv.innerHTML = `<p>${pageData.footer}</p>`;
         pageDiv.appendChild(footerDiv);
       }
@@ -92,7 +103,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
       <Head>
         <title>Human by Design</title>
         <link
@@ -100,20 +111,52 @@ export default function Home() {
           rel="stylesheet"
         />
         <style>{`
-          @page { margin: 0; }
-          body { margin: 0; }
-          .page { page-break-after: always; padding: 2rem; }
-          .header, .footer { width: 100%; text-align: center; position: fixed; }
-          .header { top: 0; }
-          .footer { bottom: 0; }
-          .content { margin: 60px 0; }
-          .column-text { column-count: 2; column-gap: 1.5rem; }
-          .image-placeholder { width: 40%; height: auto; }
-          .text-placeholder { width: 55%; }
+          @page {
+            size: 11in 8.5in;
+            margin: 1in;
+          }
+          body {
+            margin: 0;
+          }
+          .page {
+            page-break-after: always;
+            padding: 2rem;
+            height: 8.5in;
+            width: 11in;
+            box-shadow: 0 0 0.5in rgba(0, 0, 0, 0.1);
+            margin: 1in auto;
+          }
+          .header,
+          .footer {
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            left: 0;
+          }
+          .header {
+            top: 0;
+          }
+          .footer {
+            bottom: 0;
+          }
+          .content {
+            margin: 60px 0;
+          }
+          .column-text {
+            column-count: 2;
+            column-gap: 1.5rem;
+          }
+          .image-placeholder {
+            width: 40%;
+            height: auto;
+          }
+          .text-placeholder {
+            width: 55%;
+          }
         `}</style>
       </Head>
 
-      <main className="bg-gray-100 text-gray-900">
+      <main className="flex-grow">
         <div id="content"></div>
       </main>
     </div>

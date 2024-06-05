@@ -1,7 +1,5 @@
 interface ChapterItem {
-  chapter: string;
-  page: number;
-  image: string;
+  image?: string;
 }
 
 interface PageData {
@@ -11,6 +9,7 @@ interface PageData {
     title?: string;
     subtitle?: string;
     landing_page_image?: string;
+    image?: string;
     heading?: string;
     text?: string;
     items?: ChapterItem[];
@@ -24,7 +23,8 @@ const data: PageData[] = [
     content: {
       title: "Human by Design",
       subtitle: "Exploring the Essence of Human Existence",
-      landing_page_image: "cover_image.jpg",
+      landing_page_image:
+        "https://images.freeimages.com/images/large-previews/3ff/chain-link-fence-1187948.jpg",
     },
   },
   {
@@ -33,6 +33,10 @@ const data: PageData[] = [
     content: {
       heading: "Foreword",
       text: "In this book, we delve into the fundamental aspects of what it means to be human. From our biology to our psychology, and from our individual experiences to our collective societies, we explore the intricacies that make us unique. The journey through these pages aims to shed light on the complex design of humanity.",
+      items: {
+        image:
+          "https://images.freeimages.com/images/large-previews/3ff/chain-link-fence-1187948.jpg",
+      },
     },
     footer: "Page 2",
   },
