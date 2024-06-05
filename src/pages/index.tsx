@@ -1,10 +1,10 @@
-import Header from "../components/Header";
+import Main from "../components/Home";
 import React from "react";
 
 const Home: React.FC = () => {
   return (
     <div>
-      <Header />
+      <Main />
     </div>
   );
 };
