@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
+export const config = {
+  maxDuration: 60,
+};
+
 async function generateContent(openaiHeaders: any, topic: string) {
   try {
     const response = await axios.post(
