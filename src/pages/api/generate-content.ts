@@ -1,12 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
-const openaiHeaders = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-};
-
-async function generateContent(topic: string) {
+async function generateContent(openaiHeaders: any, topic: string) {
   try {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -18,7 +13,22 @@ async function generateContent(topic: string) {
               type: "json_object",
             },
             role: "user",
-            content: `generate article content on topic ${topic} and give me response in this format:\n{\n"mainTitle",\n"mainSubtitle"\n"introName",\n"introContent"\n"chapterOneName",\n"chapterOneContent",\n"chapterTwoName",\n"chapterTwoContent",\n"chapterThreeName",\n"chapterThreeContent",\n"chapterFourName"\n"chapterFourContent",\n"conclusionName",\n"conclusionContent"\n}`,
+            content: `generate article content on topic ${topic}, each content/description must have around 500 characters and give me response in this format: {
+              "mainTitle",
+              "mainSubtitle",
+              "introName",
+              "introContent",
+              "chapterOneName",
+              "chapterOneContent",
+              "chapterTwoName",
+              "chapterTwoContent",
+              "chapterThreeName",
+              "chapterThreeContent",
+              "chapterFourName",
+              "chapterFourContent",
+              "conclusionName",
+              "conclusionContent"
+            }`,
           },
         ],
       },
@@ -33,6 +43,7 @@ async function generateContent(topic: string) {
 }
 
 async function generateImages(
+  openaiHeaders: any,
   model: string,
   prompt: string,
   n: number,
@@ -66,28 +77,37 @@ export default async function handler(
     return;
   }
 
-  const { topic } = req.body;
-  if (!topic) {
-    res.status(400).json({ error: "Topic is required" });
+  const { topic, apiKey } = req.body;
+  if (!topic || !apiKey) {
+    res.status(400).json({ error: "Topic & API Key is required" });
     return;
   }
+  const openaiHeaders = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  };
 
   try {
-    const textContent = await generateContent(topic);
-
+    // console.log("=========================================", req.body);
+    const textContent = await generateContent(openaiHeaders, topic);
+    // console.log("=========================================", textContent);
     const articleImages = await generateImages(
+      openaiHeaders,
       "dall-e-2",
       `generate 4 images for my article on topic ${topic}`,
       4,
-      "256x256"
+      "512x512"
     );
+    // console.log("=========================================", articleImages);
 
     const landingPageImage = await generateImages(
+      openaiHeaders,
       "dall-e-3",
       `generate a minimal background image for landing page of my article on topic ${topic}`,
       1,
       "1792x1024"
     );
+    // console.log("=========================================", landingPageImage);
 
     const finalDataObj = {
       ...textContent,
@@ -97,10 +117,10 @@ export default async function handler(
       chapterTwoImage: articleImages[2],
       chapterOneImage: articleImages[3],
     };
-    // console.log(
-    //   "==================================================",
-    //   finalDataObj
-    // );
+    console.log(
+      "==================================================",
+      finalDataObj
+    );
     res.status(200).json({ content: finalDataObj });
   } catch (error) {
     console.error("Error:", error);

@@ -10,7 +10,7 @@ const MagazinePage = ({ data }) => {
           <img
             src={data.bgImagePath}
             alt="Background Image"
-            className="w-full h-full object-cover opacity-50"
+            className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center bg-opacity-50">
             <h1 className="text-4xl font-bold mb-4 text-black">
