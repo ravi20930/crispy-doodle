@@ -1,7 +1,8 @@
 export const data = {
   mainTitle: "Exploring Next.js: The Future of React Development",
   mainSubtitle: "Unlocking the Power of Server-Side Rendering and More",
-  bgImagePath: "https://via.placeholder.com/1600x900", // Wide landscape image
+  bgImagePath:
+    "https://img.freepik.com/free-photo/transparent-vivid-autumn-leaves_23-2148239689.jpg?t=st=1717705957~exp=1717709557~hmac=459fb2d49b2698cf17b63a7dc415105e99be038af80a179de4c09a0bf31dea7b&w=1800", // Wide landscape image
   introName: "Introduction to Next.js",
   introContent:
     "Next.js, a React framework, has emerged as a game-changer in the world of web development. It offers a powerful combination of server-side rendering, static site generation, and seamless client-side navigation. This article dives deep into the features and benefits of Next.js, showcasing its potential to revolutionize how we build web applications.",
