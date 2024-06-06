@@ -1,11 +1,12 @@
-import { data } from "../utils/data";
-
-const MagazinePage = () => {
+const MagazinePage = ({ data }) => {
   return (
     <div className="font-sans bg-gray-100 text-black">
       <div className="container mx-auto p-4 space-y-8">
         {/* Main Title Section */}
-        <div className="relative col-span-2 text-center page">
+        <div
+          className="relative col-span-2 text-center page"
+          style={{ fontFamily: "dd-medium" }}
+        >
           <img
             src={data.bgImagePath}
             alt="Background Image"

@@ -5,7 +5,7 @@ import Mg from "../components/Magazine";
 const Home: React.FC = () => {
   return (
     <div>
-      <Mg />
+      <Main />
     </div>
   );
 };
