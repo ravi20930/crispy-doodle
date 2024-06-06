@@ -12,10 +12,10 @@ const Main = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showLoaderModal, setShowLoaderModal] = useState(false);
-  const componentRef = useRef();
+  const componentRef = useRef<HTMLDivElement | null>(null);
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    content: () => componentRef.current || null,
     documentTitle: "Magazine Content",
     onAfterPrint: () => {
       // Optional: Handle any post-print actions here
@@ -46,7 +46,7 @@ const Main = () => {
         toast.success("Content generated successfully");
         setShowModal(true); // Open the modal when content is generated successfully
       } else {
-        console.error("Error:", data.error);
+        // console.error("Error:", data.error);
         toast.error("Error generating content");
       }
     } catch (error) {
