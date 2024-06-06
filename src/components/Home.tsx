@@ -1,164 +1,65 @@
-import Head from "next/head";
-import { useEffect } from "react";
-import data from "../utils/data";
+import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function Home() {
-  useEffect(() => {
-    renderContent(data);
-  }, []);
+const Main: React.FC = () => {
+  const [topic, setTopic] = useState("");
+  const [openaiResponse, setOpenaiResponse] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const renderContent = (data) => {
-    const contentDiv = document.getElementById("content");
-    let imageLeft = true; // To alternate image position
+  const generateContent = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/generate-content", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ topic }),
+      });
 
-    data.forEach((pageData) => {
-      const pageDiv = document.createElement("div");
-      pageDiv.classList.add("page", "bg-white", "relative");
+      const data = await response.json();
 
-      if (pageData.header) {
-        const headerDiv = document.createElement("div");
-        headerDiv.classList.add(
-          "header",
-          "py-4",
-          "bg-indigo-700",
-          "text-white"
-        );
-        headerDiv.innerHTML = `<h1 class="text-xl">${pageData.header}</h1>`;
-        pageDiv.appendChild(headerDiv);
+      if (response.ok) {
+        setOpenaiResponse(data.content);
+        toast.success("Content generated successfully");
+      } else {
+        console.error("Error:", data.error);
+        toast.error("Error generating content");
       }
-
-      const contentWrapper = document.createElement("div");
-      contentWrapper.classList.add(
-        "content",
-        "mt-20",
-        "flex",
-        "justify-between",
-        "px-8"
-      );
-
-      if (pageData.content.title) {
-        contentWrapper.innerHTML = `
-          <div class="w-full text-center">
-              <h1 class="text-5xl font-bold mb-4">${pageData.content.title}</h1>
-              <h2 class="text-2xl text-gray-700">${pageData.content.subtitle}</h2>
-              <img src="${pageData.content.landing_page_image}" alt="Cover Image" class="mt-8 mx-auto">
-          </div>
-        `;
-      } else if (pageData.content.heading) {
-        const textWrapper = document.createElement("div");
-        textWrapper.classList.add("text-placeholder", "mr-4");
-
-        textWrapper.innerHTML = `<h2 class="text-3xl font-bold mb-6">${pageData.content.heading}</h2>`;
-
-        if (pageData.content.text) {
-          textWrapper.innerHTML += `<p class="text-lg column-text">${pageData.content.text}</p>`;
-        } else if (pageData.content.items) {
-          const ul = document.createElement("ul");
-          ul.classList.add("list-disc", "pl-5");
-          pageData.content.items.forEach((item) => {
-            const li = document.createElement("li");
-            li.classList.add("mb-2");
-            li.innerHTML = `
-              <span class="font-bold">${item.chapter}</span> - Page ${item.page}
-              <img src="${item.image}" alt="${item.chapter}" class="mt-2 w-full h-24 object-cover">
-            `;
-            ul.appendChild(li);
-          });
-          textWrapper.appendChild(ul);
-        }
-
-        const imageWrapper = document.createElement("div");
-        imageWrapper.classList.add("image-placeholder", "ml-4");
-        imageWrapper.innerHTML = `<img src="${
-          pageData.content.items ? pageData.content.items.image : ""
-        }" alt="Page Image" class="w-full h-48 object-cover">`;
-
-        if (imageLeft) {
-          contentWrapper.appendChild(imageWrapper);
-          contentWrapper.appendChild(textWrapper);
-        } else {
-          contentWrapper.appendChild(textWrapper);
-          contentWrapper.appendChild(imageWrapper);
-        }
-
-        imageLeft = !imageLeft;
-      }
-
-      pageDiv.appendChild(contentWrapper);
-
-      if (pageData.footer) {
-        const footerDiv = document.createElement("div");
-        footerDiv.classList.add(
-          "footer",
-          "py-4",
-          "bg-indigo-700",
-          "text-white"
-        );
-        footerDiv.innerHTML = `<p>${pageData.footer}</p>`;
-        pageDiv.appendChild(footerDiv);
-      }
-
-      contentDiv.appendChild(pageDiv);
-    });
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
-      <Head>
-        <title>Human by Design</title>
-        <link
-          href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-          rel="stylesheet"
-        />
-        <style>{`
-          @page {
-            size: 11in 8.5in;
-            margin: 1in;
-          }
-          body {
-            margin: 0;
-          }
-          .page {
-            page-break-after: always;
-            padding: 2rem;
-            height: 8.5in;
-            width: 11in;
-            box-shadow: 0 0 0.5in rgba(0, 0, 0, 0.1);
-            margin: 1in auto;
-          }
-          .header,
-          .footer {
-            width: 100%;
-            text-align: center;
-            position: absolute;
-            left: 0;
-          }
-          .header {
-            top: 0;
-          }
-          .footer {
-            bottom: 0;
-          }
-          .content {
-            margin: 60px 0;
-          }
-          .column-text {
-            column-count: 2;
-            column-gap: 1.5rem;
-          }
-          .image-placeholder {
-            width: 40%;
-            height: auto;
-          }
-          .text-placeholder {
-            width: 55%;
-          }
-        `}</style>
-      </Head>
-
-      <main className="flex-grow">
-        <div id="content"></div>
-      </main>
+    <div className="max-w-md mx-auto p-4">
+      <input
+        type="text"
+        placeholder="Enter topic"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        className="border border-gray-300 rounded-md p-2 w-full mb-4"
+      />
+      <button
+        onClick={generateContent}
+        className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4"
+        disabled={loading}
+      >
+        {loading ? "Generating..." : "Generate Content"}
+      </button>
+      {openaiResponse && (
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold mb-2">OpenAI Response:</h2>
+          <p className="text-gray-800">{openaiResponse}</p>
+        </div>
+      )}
+      <ToastContainer />
     </div>
   );
-}
+};
+
+export default Main;
